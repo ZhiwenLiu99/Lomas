@@ -75,6 +75,7 @@ if __name__ == "__main__":
             z = np.argmax(np.random.multinomial(1, theta))
             # sample word from topic
             beta = topic_terms[z]
+            beta /= (1+1e-7)  # to avoid sum(pval)>1 because of decimal round
             maxidx = np.argmax(np.random.multinomial(1, beta))
             new_word = dictionary[maxidx]
             meta = re.split(',|\(|\)', new_word)  # ['', ' 65', '25', '']
