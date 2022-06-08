@@ -26,3 +26,7 @@ We are working on some advanced features (e.g. adjusting interarrival-time to mi
 The first line is the number of flows.
 
 Each line after that is a flow: `<source host> <dest host> <priority (const 3)> <dest port number (const 100)> <flow size (bytes)> <start time (seconds)>`
+
+## Environment
+
+python >= 3.6

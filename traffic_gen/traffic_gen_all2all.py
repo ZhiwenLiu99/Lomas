@@ -39,39 +39,38 @@ if __name__ == "__main__":
 	parser.add_option("-o", "--output", dest = "output", help = "the output file", default = "tmp_traffic.txt")
 	options,args = parser.parse_args()
 
-	base_t = 2000000000
+	base_t = 2e9  # start from 2s
 
 	if not options.nhost:
-		print "please use -n to enter number of hosts"
+		print("please use -n to enter number of hosts")
 		sys.exit(0)
 	nhost = int(options.nhost)
 	load = float(options.load)
 	bandwidth = translate_bandwidth(options.bandwidth)
 	time = float(options.time)*1e9 # translates to ns
 	if bandwidth == None:
-		print "bandwidth format incorrect"
+		print("bandwidth format incorrect")
 		sys.exit(0)
 
 	fileName = options.cdf_file
 	file = open(fileName,"r")
 	lines = file.readlines()
-	# read the cdf, save in cdf as [[x_i, cdf_i] ...]
+	# read the cdf, save in cdf as [[flow size, percentile] ...]
 	cdf = []
 	for line in lines:
 		x,y = map(float, line.strip().split(' '))
 		cdf.append([x,y])
-
 	# create a custom random generator, which takes a cdf, and generate number according to the cdf
 	customRand = CustomRand()
 	if not customRand.setCdf(cdf):
-		print "Error: Not valid cdf"
+		print("Error: Not valid cdf")
 		sys.exit(0)
 
 	ofile = open(options.output, "w")
 
 	# generate flows
 	avg = customRand.getAvg()
-	avg_inter_arrival = 1/(bandwidth*load/8./avg)*1000000000
+	avg_inter_arrival = 1/(bandwidth*load/8./avg)*1e9
 	n_flow_estimate = int(time / avg_inter_arrival * nhost)
 	n_flow = 0
 	ofile.write("%d \n"%n_flow_estimate)
@@ -91,7 +90,7 @@ if __name__ == "__main__":
 			if size <= 0:
 				size = 1
 			n_flow += 1;
-			ofile.write("%d %d 3 100 %d %.9f\n"%(src+1, dst+1, np.int32(size), t * 1e-9))
+			ofile.write("%d %d 3 100 %d %.9f\n"%(src, dst, np.int32(size), t * 1e-9))
 			heapq.heapreplace(host_list, (t + inter_t, src))
 	ofile.seek(0)
 	ofile.write("%d"%n_flow)

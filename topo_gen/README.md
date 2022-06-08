@@ -27,3 +27,8 @@ Currently, we provide 2 kinds of topologies:
 
 * star-like: N-1 servers connected to 1 switch
 * fat-tree: [A Scalable, Commodity Data Center Network Architecture](http://ccr.sigcomm.org/online/files/p63-alfares.pdf)
+
+
+## Environment
+
+python >= 3.6

@@ -56,7 +56,7 @@ def gen():
             add_edge(pod[j // K], servers[ctr])
             ctr += 1
         pods.append(pod)    
-    print "hostnum: ", hnum         
+    print("hostnum: ", hnum )        
     assert(ctr == hnum)
 
 def print_topo(file_name, delay, error_rate):

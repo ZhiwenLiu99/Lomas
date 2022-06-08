@@ -1,3 +1,5 @@
+## -*- coding: utf-8 -*-
+
 import os
 import re
 import numpy as np
@@ -60,7 +62,7 @@ if __name__ == "__main__":
     unique_ip.extend(list(num_perPair['dst_id'].values))
     unique_ip = list(np.unique(unique_ip).astype('int'))
     nhost = len(unique_ip)
-    print("number of hosts: {}".format(nhost))
+    print("number of hosts: {}".format(nhost))  # num of server: 203
 
     new_docs = []
     this_topic = np.zeros(topic_terms.shape[1])
