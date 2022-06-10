@@ -19,11 +19,11 @@ We use trained model by *Lomas (APNet`22)* to generate two real world datacenter
 
 The suffix '_avd'  means we add some advanced features (e.g. adjusting interarrival-time to mimic different level of load/demand, and different number of servers).
 
-  `python traffic_gen_EDUx_adv.py -h` for help. 
-
-For EDU1, the number of servers should be larger than 203 (which is the ground truth in training data). And for EDU2, the number of servers should be larger than 233.
+ `python traffic_gen_EDUx_adv.py -h` for help. 
 
 When a larger n is chosen, we use the `nearest neighbor upscaling method`  (just like upscale an image, we upscale the traffic matrix) to spread the pixels (servers) out and fill in the holes by copying the flow patterns from the closest pixels.
+
+> For EDU1, the number of servers should be larger than 203 (which is the ground truth in training data). And for EDU2, the number of servers should be larger than 233.
 
 #### For EDU1 & EDU2 (Deprecated)
 
