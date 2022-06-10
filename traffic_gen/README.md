@@ -13,13 +13,23 @@ Example:
 
 We provide 4 flow-size distributions to generate all2all & incast trace. `WebSearch_distribution.txt` and `FbHdp_distribution.txt` are the ones used in the HPCC paper. `AliStorage2019.txt` are collected from Alibaba's production distributed storage system in 2019. `GoogleRPC2008.txt` are Google's RPC size distribution before 2008.
 
-#### For EDU1 & EDU2
+#### For EDU1_adv & EDU2_adv
+
+We use trained model by *Lomas (APNet`22)* to generate two real world datacenter traces ([EDU1 and EDU2](https://pages.cs.wisc.edu/~tbenson/IMC10_Data.html)).
+
+The suffix '_avd'  means we add some advanced features (e.g. adjusting interarrival-time to mimic different level of load/demand, and different number of servers).
+
+  `python traffic_gen_EDUx_adv.py -h` for help. 
+
+For EDU1, the number of servers should be larger than 203 (which is the ground truth in training data). And for EDU2, the number of servers should be larger than 233.
+
+When a larger n is chosen, we use the `nearest neighbor upscaling method`  (just like upscale an image, we upscale the traffic matrix) to spread the pixels (servers) out and fill in the holes by copying the flow patterns from the closest pixels.
+
+#### For EDU1 & EDU2 (Deprecated)
 
 We use trained model by *Lomas (APNet`22)* to generate two real world datacenter traces ([EDU1 and EDU2](https://pages.cs.wisc.edu/~tbenson/IMC10_Data.html)).
 
 `python traffic_gen_EDUx.py -h` for help.
-
-We are working on some advanced features (e.g. adjusting interarrival-time to mimic different level of load/demand), these features will be available in `traffic_gen_EDUx_adv.py`
 
 ## Traffic format
 

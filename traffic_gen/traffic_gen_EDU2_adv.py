@@ -46,7 +46,6 @@ def sample_size(cdf, tag):
     x = np.random.uniform(low=x0, high=x1, size=None)
     return y0 + (y1-y0)/(x1-x0)*(x-x0)
 
-
 def getAvg(cdf):
     '''
     x-axis: values (e.g. flow size)
@@ -78,7 +77,6 @@ def get_divider(length, threshold, divider, param):
         return param * divider 
     else:
         return param * divider * (length / threshold) ** 2
-    
 
 if __name__ == "__main__":
     np.random.seed(2022)
@@ -87,16 +85,16 @@ if __name__ == "__main__":
     large_interval_threshold = 3   # hyperparameter, boundary to distinguish abnormal large flow-interval
 
     parser = OptionParser()
-    parser.add_option("-n", "--nhost", dest = "nhost", help = "number of hosts", default=203)
+    parser.add_option("-n", "--nhost", dest = "nhost", help = "number of hosts", default=233)
     parser.add_option("-l", "--load", dest = "load", help = "the percentage of the traffic load to the network capacity, by default 0.3", default = "0.3")
     parser.add_option("-b", "--bandwidth", dest = "bandwidth", help = "the bandwidth of host link (G/M/K), by default 10G", default = "10G")
     parser.add_option("-t", "--time", dest = "time", help = "the total run time (s), by default 1", default = "1")
     parser.add_option("-o", "--output", dest = "output", help = "the output file", default = "tmp_traffic.txt")
     options,args = parser.parse_args()
-    
+
     ###############  load cdf  ###############
-    cdf_size = pd.read_csv("./stats_EDU1/cdf_size.csv", index_col=[0])
-    cdf_interval = pd.read_csv("./stats_EDU1/cdf_interval.csv", index_col=[0])
+    cdf_size = pd.read_csv("./stats_EDU2/cdf_size.csv", index_col=[0])
+    cdf_interval = pd.read_csv("./stats_EDU2/cdf_interval.csv", index_col=[0])
 
     ###############  calculate params  ###############
     nhost = int(options.nhost)
@@ -108,23 +106,23 @@ if __name__ == "__main__":
     divider = real_avg_interval / target_interval
     
     time_limit = float(options.time)*1e9 # translates to ns
-    
+
     ###############  load model  ###############
-    dictionary = corpora.Dictionary.load("./model_EDU1/qzone.dict")      
-    doc_topics = pd.read_csv("./model_EDU1/res_document_topics.csv", index_col=[0]).values  # document-topic matrix
+    dictionary = corpora.Dictionary.load("./model_EDU2/qzone.dict")      
+    doc_topics = pd.read_csv("./model_EDU2/res_document_topics.csv", index_col=[0]).values  # document-topic matrix
     doc_topics = np.divide(doc_topics, np.sum(doc_topics, axis=1).reshape(-1,1))       # normalize each row to sum to 1
-    model = LdaModel.load("./model_EDU1/qzone.model", mmap='r')
+    model = LdaModel.load("./model_EDU2/qzone.model", mmap='r')
     topic_terms = model.get_topics()
     topic_terms = np.divide(topic_terms, np.sum(topic_terms, axis=1).reshape(-1,1))    # normalize each row to sum to 1
     
     ###############  load src-dst  ###############
-    num_perPair = pd.read_csv("./stats_EDU1/num_perPair.csv", index_col=[0])
+    num_perPair = pd.read_csv("./stats_EDU2/num_perPair.csv", index_col=[0])
     pairs = list(num_perPair['src_dst_id'].values)
     unique_ip = list(num_perPair['src_id'].values)
     unique_ip.extend(list(num_perPair['dst_id'].values))
     unique_ip = list(np.unique(unique_ip).astype('int'))
     raw_n = len(unique_ip)
-    # print("#pairs: {} #hosts: {}".format(len(pairs), raw_n)) # num of src-dst pairs: 306, num of server: 203
+    # print("number of hosts: {}".format(nhost))  # num of src-dst pairs: 386, num of server: 233
     if(nhost<raw_n):
         print("Unsupported! Host number should be no less than {}".format(raw_n))
         sys.exit(0)
@@ -144,7 +142,7 @@ if __name__ == "__main__":
     ###############  generating  ###############
     inters = []
     new_docs = []
-    this_topic = np.zeros(topic_terms.shape[1])
+    beta_adj = np.zeros(topic_terms.shape[1])
     for src_ip in dst_dict.keys():
         for epoch in range(quotient):
             src_id = id_mat[epoch][unique_ip.index(src_ip)]
@@ -164,7 +162,9 @@ if __name__ == "__main__":
                 z = np.argmax(np.random.multinomial(1, theta))
                 # sample word from topic
                 beta = topic_terms[z]
-                maxidx = np.argmax(np.random.multinomial(1, beta))
+                beta_adj[:] = beta[:]
+                beta_adj /= (1+5e-8)     # naive approach to fix 'sum(pvals[:-1].astype(np.float64)) > 1.0' precision changes problem when casting
+                maxidx = np.argmax(np.random.multinomial(1, beta_adj))  
                 new_word = dictionary[maxidx]
                 meta = re.split(',|\(|\)', new_word)  # ['', ' 65', '25', '']
 
@@ -177,12 +177,11 @@ if __name__ == "__main__":
                 flow = [src_id, dst_id, timestamp, sample_size(cdf_size, int(meta[2]))]
                 new_docs.append(flow)
 
-    
     print("#flow nums: {}".format(len(inters)))
     print("realized avg interval: {}, expect interval: {}".format(np.mean(inters), target_interval))
     df = pd.DataFrame(new_docs, columns=['src_id', 'dst_id', 'start_t', 'flow_size'])
     df.sort_values(by=['start_t'], inplace=True)
-    #df.to_csv("./flows.csv")
+    # df.to_csv("./flows.csv")
     with open(options.output, "w+") as f:
         src = df['src_id']
         dst = df['dst_id']

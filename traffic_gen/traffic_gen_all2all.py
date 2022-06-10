@@ -30,6 +30,8 @@ def poisson(lam):
 
 if __name__ == "__main__":
 	port = 80
+	base_t = 2e9  # start from 2s
+	
 	parser = OptionParser()
 	parser.add_option("-c", "--cdf", dest = "cdf_file", help = "the file of the traffic size cdf", default = "uniform_distribution.txt")
 	parser.add_option("-n", "--nhost", dest = "nhost", help = "number of hosts")
@@ -38,8 +40,6 @@ if __name__ == "__main__":
 	parser.add_option("-t", "--time", dest = "time", help = "the total run time (s), by default 1", default = "1")
 	parser.add_option("-o", "--output", dest = "output", help = "the output file", default = "tmp_traffic.txt")
 	options,args = parser.parse_args()
-
-	base_t = 2e9  # start from 2s
 
 	if not options.nhost:
 		print("please use -n to enter number of hosts")

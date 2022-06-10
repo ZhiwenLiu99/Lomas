@@ -60,7 +60,10 @@ if __name__ == "__main__":
     unique_ip.extend(list(num_perPair['dst_id'].values))
     unique_ip = list(np.unique(unique_ip).astype('int'))
     nhost = len(unique_ip)
-    print("number of hosts: {}".format(nhost))
+    # print("number of hosts: {}".format(nhost))  # num of src-dst pairs: 386, num of server: 233
+
+    import pdb
+    pdb.set_trace()
 
     new_docs = []
     this_topic = np.zeros(topic_terms.shape[1])
@@ -75,8 +78,9 @@ if __name__ == "__main__":
             z = np.argmax(np.random.multinomial(1, theta))
             # sample word from topic
             beta = topic_terms[z]
-            beta /= (1+1e-7)  # to avoid sum(pval)>1 because of decimal round
-            maxidx = np.argmax(np.random.multinomial(1, beta))
+            this_topic[:] = beta[:]
+            this_topic /= (1+1e-7)  # to avoid sum(pval)>1 because of decimal round
+            maxidx = np.argmax(np.random.multinomial(1, this_topic))
             new_word = dictionary[maxidx]
             meta = re.split(',|\(|\)', new_word)  # ['', ' 65', '25', '']
 

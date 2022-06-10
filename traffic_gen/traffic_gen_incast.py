@@ -15,29 +15,33 @@ def delta():
 def getsize():
     return random.randint(1, 10) * (10 ** 6) 
 
-def gen(n, victim):
+def gen(n, victim, base_t, epoch):
     """
-    n: 服务器节点总量
-    victim: incast 打流的目标服务器编号
+    n: number of server
+    victim: incast to which server?
+    base_t: time to start
+    epoch: number of epoch
     """
     start = 0
-    epoch = 5
     flow = []
     for j in range(epoch):
         for i in range(n):
             if i != victim:
-                flow.append((i, victim, 3, 100, getsize(), 2 + start))
+                flow.append((i, victim, 3, 100, getsize(), base_t*1e-9 + start))
                 start += delta()
     return flow
 
 
 if __name__ == "__main__":
+    base_t = 2e9  # start from 2s
+    epoch = 5     # number of round
+
     parser = OptionParser()
     parser.add_option("-n", "--nhost", dest="nhost", help="number of host", default=65)
     parser.add_option("-o", "--output", dest="output", help="the output file", default="incastTraffic.txt")
     options, args = parser.parse_args()
     
-    flow = gen(n=options.nhost, victim=0)
+    flow = gen(n=options.nhost, victim=0, base_t=base_t, epoch=epoch)
     
     with open(options.output, "w+") as f:
         f.write(str(len(flow)) + '\n')
