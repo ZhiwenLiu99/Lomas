@@ -4,11 +4,11 @@ USE_DYNAMIC_PFC_THRESHOLD 1
 PACKET_PAYLOAD_SIZE 1000
 
 TOPOLOGY_FILE ../topo_gen/output/fattree.txt
-FLOW_FILE ../traffic_gen/output/EDU1Traffic.txt
-TRACE_FILE ../simulation_res/hpcc_EDU1/trace.txt
-TRACE_OUTPUT_FILE ../simulation_res/hpcc_EDU1/mix_fattree_EDU1Traffic_hp95ai50.tr
-FCT_OUTPUT_FILE ../simulation_res/hpcc_EDU1/fct_fattree_EDU1Traffic_hp95ai50.txt
-PFC_OUTPUT_FILE ../simulation_res/hpcc_EDU1/pfc_fattree_EDU1Traffic_hp95ai50.txt
+FLOW_FILE ../traffic_gen/output/EDU2ADVTraffic.txt
+TRACE_FILE ../simulation_res/hpcc_EDU2/trace.txt
+TRACE_OUTPUT_FILE ../simulation_res/hpcc_EDU2/mix_fattree_EDU2ADVTraffic_hp95ai50.tr
+FCT_OUTPUT_FILE ../simulation_res/hpcc_EDU2/fct_fattree_EDU2ADVTraffic_hp95ai50.txt
+PFC_OUTPUT_FILE ../simulation_res/hpcc_EDU2/pfc_fattree_EDU2ADVTraffic_hp95ai50.txt
 
 SIMULATOR_STOP_TIME 4.00
 
@@ -53,6 +53,6 @@ KMAX_MAP 2 100000000000 1600 400000000000 6400
 KMIN_MAP 2 100000000000 400 400000000000 1600
 PMAX_MAP 2 100000000000 0.20 400000000000 0.20
 BUFFER_SIZE 32
-QLEN_MON_FILE ../simulation_res/hpcc_EDU1/qlen_fattree_EDU1Traffic_hp95ai50.txt
+QLEN_MON_FILE ../simulation_res/hpcc_EDU2/qlen_fattree_EDU2ADVTraffic_hp95ai50.txt
 QLEN_MON_START 2000000000
 QLEN_MON_END 3000000000

@@ -168,8 +168,9 @@ if __name__ == "__main__":
                 new_word = dictionary[maxidx]
                 meta = re.split(',|\(|\)', new_word)  # ['', ' 65', '25', '']
 
-                interarrival = sample_time(cdf_interval, int(meta[1])) * 1e9
+                interarrival = sample_time(cdf_interval, int(meta[1]))
                 interarrival /= get_divider(interarrival, large_interval_threshold, divider, multiplier)
+                interarrival = interarrival*1e9
                 inters.append(interarrival)
                 timestamp += interarrival
                 if timestamp > time_limit:
@@ -183,12 +184,18 @@ if __name__ == "__main__":
     df.sort_values(by=['start_t'], inplace=True)
     # df.to_csv("./flows.csv")
     with open(options.output, "w+") as f:
-        src = df['src_id']
-        dst = df['dst_id']
-        start_t = df['start_t']
-        flow_size = (df['flow_size'])
-        flow_size = [int(i) for i in flow_size]
+        src = df['src_id'].values
+        dst = df['dst_id'].values
+        start_t = df['start_t'].values
+        flow_size = []
+        for fs in df['flow_size'].values:
+            fs = int(fs)
+            if(fs<64):
+                flow_size.append(64)
+            else:
+                flow_size.append(fs)
         #print(np.sum(flow_size))
         f.write(str(len(src)) + '\n')
         for i in range(len(src)):
-            f.write('{} {} 3 100 {} {}\n'.format(src[i], dst[i], flow_size[i], (base_t+start_t[i])*1e-9))
+            t = (base_t+start_t[i])*1e-9
+            f.write('{} {} 3 100 {} {}\n'.format(src[i], dst[i], flow_size[i], t))
