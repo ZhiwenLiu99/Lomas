@@ -1,4 +1,5 @@
-simulation/
+*.tr
 analysis/
 my/
 my.md
+./simulation/.waf*
