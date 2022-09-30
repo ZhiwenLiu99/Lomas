@@ -2,7 +2,7 @@
 
 The prototype source code of the paper:
 
-*Locality Matters! Traffic Demand Modeling in Datacenter Networks* (Best Student Paper Award)
+[*Locality Matters! Traffic Demand Modeling in Datacenter Networks*](https://conferences.sigcomm.org/events/apnet2022/papers/Locality%20Matters!%20Traffic%20Demand%20Modeling%20in%20Datacenter%20Networks.pdf) (Best Student Paper Award)
 
 Zhiwen Liu (Maintainer), Mowei Wang, Yong Cui
 
